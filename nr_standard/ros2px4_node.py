@@ -590,8 +590,8 @@ class OffboardControl(Node):
 
         self.trajectory_time = time.time() - self.trajectory_T0
         self.reference_time = self.trajectory_time + self.T_LOOKAHEAD
-        self.get_logger().warning(f"\nTrajectory time: {self.trajectory_time:.2f}s, Reference time: {self.reference_time:.2f}s", throttle_duration_sec=throttle_val)
-        self.get_logger().warning(f"[{self.program_time:.2f}s] Computing control. Trajectory time: {self.trajectory_time:.2f}s", throttle_duration_sec=throttle_val)
+        # self.get_logger().warning(f"\nTrajectory time: {self.trajectory_time:.2f}s, Reference time: {self.reference_time:.2f}s", throttle_duration_sec=throttle_val)
+        # self.get_logger().warning(f"[{self.program_time:.2f}s] Computing control. Trajectory time: {self.trajectory_time:.2f}s", throttle_duration_sec=throttle_val)
 
         ref, ref_dot = self.generate_ref_trajectory(self.ref_type)
         self.ref = ref.flatten()  # type: ignore
@@ -602,7 +602,7 @@ class OffboardControl(Node):
         self.controller_handler()
         self.compute_time = time.time() - t0
         self.last_input = self.new_input
-        self.get_logger().warning(f"\nNew control input: {self.new_input}", throttle_duration_sec=throttle_val)
+        # self.get_logger().warning(f"\nNew control input: {self.new_input}", throttle_duration_sec=throttle_val)
         self.get_logger().warning(f"\nControl computation time: {self.compute_time:.4f}s, Good for {1.0/self.compute_time:.2f} Hz control loop", throttle_duration_sec=throttle_val)
 
         # NOW CONVERT TO NORMALIZED INPUTS for PX4
@@ -614,7 +614,7 @@ class OffboardControl(Node):
 
 
         self.normalized_input = [new_throttle, new_roll_rate, new_pitch_rate, new_yaw_rate]
-        self.get_logger().warning(f"\nNormalized control input (throttle, p, q, r): {self.normalized_input}", throttle_duration_sec=throttle_val)
+        # self.get_logger().warning(f"\nNormalized control input (throttle, p, q, r): {self.normalized_input}", throttle_duration_sec=throttle_val)
 
     def controller_handler(self):
         """Wrapper for controller computation."""
