@@ -1,7 +1,6 @@
 """Entry point for the Newton-Raphson Standard control ROS2 node."""
 
 import rclpy
-import sys
 import traceback
 import argparse
 import os
@@ -12,10 +11,6 @@ from .ros2px4_node import OffboardControl
 from quad_platforms import PlatformType
 from quad_trajectories import TrajectoryType
 from pyJoules.handler.csv_handler import CSVHandler
-
-
-BANNER: str = '\n' + "==" * 30 + '\n'
-
 
 def create_parser():
     """Create and configure argument parser.
@@ -113,6 +108,14 @@ def create_parser():
         help='Enable spin for circle_horz and helix trajectories'
     )
 
+    parser.add_argument(
+        '--flight-period',
+        type=float,
+        default=None,
+        help='Set custom flight period in seconds (default: 30s)'
+    )
+
+
     return parser
 
 def ensure_csv(filename: str) -> str:
@@ -166,9 +169,9 @@ def validate_args(args, parser: argparse.ArgumentParser) -> None:
             parser.error("--hover-mode is required when --trajectory=hover")
         # Platform-specific limits
         if args.platform == PlatformType.HARDWARE and args.hover_mode not in range(1, 5):
-            parser.error("--hover-mode must be 1–4 for --platform=hw")
+            parser.error("--hover-mode must be 1-4 for --platform=hw")
         if args.platform == PlatformType.SIM and args.hover_mode not in range(1, 9):
-            parser.error("--hover-mode must be 1–8 for --platform=sim")
+            parser.error("--hover-mode must be 1-8 for --platform=sim")
     else:
         # Disallow hover-mode when not doing hover
         if args.hover_mode is not None:
@@ -193,6 +196,7 @@ def main():
     double_speed = args.double_speed
     short = args.short
     spin = args.spin
+    flight_period = args.flight_period
     base_path = os.path.dirname(os.path.abspath(__file__))
 
     # Determine log filename
@@ -217,8 +221,10 @@ def main():
     print(f"Hover Mode:    {hover_mode if hover_mode is not None else 'N/A'}")
     print(f"Speed:         {'Double (2x)' if double_speed else 'Regular (1x)'}")
     print(f"Short:         {'Enabled (fig8_vert)' if short else 'Disabled'}")
+    print(f"Flight Period: {flight_period if flight_period is not None else 60.0 if platform == PlatformType.HARDWARE else 30.0} seconds")
     print(f"Spin:          {'Enabled (circle_horz, helix)' if spin else 'Disabled'}")
     print(f"Data Logging:  {'Enabled' if logging_enabled else 'Disabled'}")
+
     if logging_enabled:
         print(f"Log File:      {log_file}")
     print(f"PyJoules:      {'Enabled' if pyjoules else 'Disabled'}")
@@ -235,6 +241,7 @@ def main():
         pyjoules=pyjoules,
         csv_handler=CSVHandler(log_file, base_path) if pyjoules and log_file else None,
         logging_enabled=logging_enabled,
+        flight_period_=flight_period
     )
 
     logger = None
