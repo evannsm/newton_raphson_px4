@@ -13,7 +13,8 @@ from px4_msgs.msg import(
     VehicleCommand,
     VehicleStatus,
     VehicleOdometry,
-    RcChannels
+    RcChannels,
+    BatteryStatus
 )
 from nr_standard_utils.px4_utils.core_funcs import (
     engage_offboard_mode,
@@ -133,6 +134,14 @@ class OffboardControl(Node):
             RcChannels, '/fmu/out/rc_channels',
             self.rc_channel_callback, qos_profile)
 
+        # Battery voltage compensation
+        self.BATTERY_VOLTAGE_COMPENSATION = True
+        self.NOMINAL_VOLTAGE = 16.8  # 4S LiPo full charge voltage
+        self.battery_voltage = self.NOMINAL_VOLTAGE  # assume full until first reading
+        self.BATTERY_LPF_ALPHA = 0.05  # low-pass filter coefficient (0 < alpha < 1)
+        self.battery_status_subscriber = self.create_subscription(
+            BatteryStatus, '/fmu/out/battery_status',
+            self.battery_status_callback, qos_profile)
 
         # ----------------------- Set up Flight Phases and Time --------------------------
         self.T0 = time.time()
@@ -390,6 +399,11 @@ class OffboardControl(Node):
         flight_mode = rc_channels.channels[self.mode_channel - 1]
         self.offboard_mode_rc_switch_on = True if flight_mode >= 0.75 else False
 
+    def battery_status_callback(self, msg):
+        """Update battery voltage with exponential moving average low-pass filter."""
+        if msg.voltage_v > 0:
+            self.battery_voltage = ((1.0 - self.BATTERY_LPF_ALPHA) * self.battery_voltage
+                                    + self.BATTERY_LPF_ALPHA * msg.voltage_v)
 
     # ========== Timer Callbacks ==========
     def get_phase(self) -> FlightPhase:
@@ -608,10 +622,15 @@ class OffboardControl(Node):
         # NOW CONVERT TO NORMALIZED INPUTS for PX4
         new_force = float(self.new_input[0])
         new_throttle = float(self.platform.get_throttle_from_force(new_force))
+
+        # Battery voltage compensation: scale throttle to account for voltage sag
+        if self.BATTERY_VOLTAGE_COMPENSATION:
+            new_throttle *= self.NOMINAL_VOLTAGE / self.battery_voltage
+            new_throttle = min(new_throttle, 1.0)
+
         new_roll_rate = float(self.new_input[1])
         new_pitch_rate = float(self.new_input[2])
         new_yaw_rate = float(self.new_input[3])
-
 
         self.normalized_input = [new_throttle, new_roll_rate, new_pitch_rate, new_yaw_rate]
         # self.get_logger().warning(f"\nNormalized control input (throttle, p, q, r): {self.normalized_input}", throttle_duration_sec=throttle_val)
