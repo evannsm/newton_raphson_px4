@@ -27,13 +27,13 @@ The NR Flow controller is an integral-based control strategy based on a continuo
 source install/setup.bash
 
 # Fly a circle in simulation
-ros2 run nr_standard run_node --platform sim --trajectory circle_horz
+ros2 run newton_raphson_px4 run_node --platform sim --trajectory circle_horz
 
 # Fly a helix on hardware with logging
-ros2 run nr_standard run_node --platform hw --trajectory helix --log
+ros2 run newton_raphson_px4 run_node --platform hw --trajectory helix --log
 
 # Hover mode 3, double speed, with yaw spin
-ros2 run nr_standard run_node --platform sim --trajectory hover --hover-mode 3 --double-speed --spin
+ros2 run newton_raphson_px4 run_node --platform sim --trajectory hover --hover-mode 3 --double-speed --spin
 ```
 
 ### CLI Options
@@ -61,13 +61,13 @@ ros2 run nr_standard run_node --platform sim --trajectory hover --hover-mode 3 -
 ## Package Structure
 
 ```
-nr_standard/
-├── nr_standard/
+newton_raphson_px4/
+├── newton_raphson_px4/
 │   ├── run_node.py              # CLI entry point and argument parsing
 │   └── ros2px4_node.py          # ROS 2 node (subscriptions, publishers, control loop)
-└── nr_standard_utils/
+└── newton_raphson_px4_utils/
     ├── controller/
-    │   ├── nr_standard.py       # Newton-Raphson control law
+    │   ├── newton_raphson_px4.py       # Newton-Raphson control law
     │   └── nr_utils.py          # Dynamics, Jacobians, CBF functions
     ├── px4_utils/               # PX4 interface and flight phase management
     ├── transformations/         # Yaw adjustment utilities
@@ -79,7 +79,7 @@ nr_standard/
 
 ```bash
 # Inside a ROS 2 workspace src/ directory
-git clone git@github.com:evannsm/nr_standard.git
+git clone git@github.com:evannsm/newton_raphson_px4.git
 cd .. && colcon build --symlink-install
 ```
 

@@ -2,8 +2,8 @@ import jax
 from jax import lax
 import jax.numpy as jnp
 
-from nr_standard_utils.jax_utils import jit
-from nr_standard_utils.controller.nr_utils import(
+from newton_raphson_px4_utils.jax_utils import jit
+from newton_raphson_px4_utils.controller.nr_utils import(
     predict_output, get_tracking_error, get_inv_jac_pred_u, get_integral_cbf
 )
 

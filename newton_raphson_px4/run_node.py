@@ -32,11 +32,11 @@ def create_parser():
         """ + "==" * 60 + """
         Example usage:
         # Auto-generated log filename:
-        ros2 run nr_standard run_node --platform sim --trajectory helix --double-speed --spin --log
+        ros2 run newton_raphson_px4 run_node --platform sim --trajectory helix --double-speed --spin --log
         # -> logs to: sim_nr_std_helix_2x_spin.csv
 
         # Custom log filename:
-        ros2 run nr_standard run_node --platform sim --trajectory helix --log --log-file my_custom_log
+        ros2 run newton_raphson_px4 run_node --platform sim --trajectory helix --log --log-file my_custom_log
         """ + "==" * 60 + """
         """
     )

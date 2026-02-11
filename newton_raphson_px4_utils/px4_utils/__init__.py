@@ -1,4 +1,4 @@
-"""PX4 utility functions for nr_standard."""
+"""PX4 utility functions for newton_raphson_px4."""
 from .core_funcs import (
     arm,
     disarm,
