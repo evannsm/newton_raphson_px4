@@ -1,11 +1,13 @@
-# NRFlow_PX4_PKG
+# Newton-Raphson Flow for PX4-ROS2 Deployment
+This package is the culmination of 3 papers on Newton-Raphson Flow for Quadrotor Control.
 
-A ROS 2 Newton-Raphson trajectory tracking controller for quadrotors. This package was created during my PhD to deploy the novel Newton-Raphson Flow control method developed mainly at Georgia Tech led by Dr. Yorai Wardi. The hardware deployment and testing was done in collaboration with Dr. Wardi by myself under the supervision of my advisor Dr. Samuel Coogan. We have compared this against the well-established NMPC technique available in my other repository [`NMPC_PX4_PKG`](https://github.com/evannsm/NMPC_PX4_PKG).
+This package allows for fast, accuate, and computationally efficient control via the Newton-Raphson Flow (NR Flow) controller developed by Dr. Yorai Wardi and others. We introduce integral CBFs (I-CBFs) to smoothly limit control actuation.
 
+The NR Flow controller is an integral-based control strategy based on a continuous time flow-version of the known newton-raphson iterative algorithm for finding the zeros of functions. It has been shown to have desirable theoretical properties in previous work, including known tracking error bounds, and we show in our hardware implementations that it compares favorably to the native control stack of PX4 Autopilot, as well as NMPC. Notably, it outperforms NMPC in terms of speed and computational efficiency (measured by joules of energy expended by the CPU), and on complex trajectories it may even outperform NMPC due to computational constraints. This is an ideal controller when facing on-board computational limitations. In particular, we test and deploy this on an on-board Raspberry Pi 4 Model B on a Holybro x500V2 quadrotor and we compare it against the NMPC controller available in my [`NMPC_PX4`](https://github.com/evannsm/NMPC_PX4) package.
 
 ## Key Features
 
-- **Newton-Raphson control law** — novel tracking control method developed at Georgia Tech
+- **Newton-Raphson control law** — iterative inversion of the system Jacobian for feedback linearization
 - **Integral CBF safety constraints** — optional barrier functions to enforce input constraints (enabled by default)
 - **JAX JIT-compiled** — all control computations are JIT-compiled for real-time performance
 - **PX4 integration** — publishes attitude setpoints and offboard commands via `px4_msgs`
@@ -82,24 +84,17 @@ cd .. && colcon build --symlink-install
 ```
 
 ## License
-
 MIT
 
-## Papers and Repositories
+# Papers and their repositories:
+American Control Conference 2024 - [see paper here](https://coogan.ece.gatech.edu/papers/pdf/cuadrado2024tracking.pdf)  
+[Personal Version of Repository](https://github.com/evannsm/MoralesCuadrado_ACC2024)  
+[Official FACTSLab Repository](https://github.com/gtfactslab/MoralesCuadrado_Llanes_ACC2024)  
 
-American Control Conference 2024 — [paper](https://coogan.ece.gatech.edu/papers/pdf/cuadrado2024tracking.pdf)
-| [Personal repo](https://github.com/evannsm/MoralesCuadrado_ACC2024)
-| [FACTSLab repo](https://github.com/gtfactslab/MoralesCuadrado_Llanes_ACC2024)
+Transactions on Control Systems Technology 2025 - [see paper here](https://arxiv.org/abs/2508.14185)  
+[Personal Version of Repository](https://github.com/evannsm/MoralesCuadrado_Baird_TCST2025)  
+[Official FACTSLab Repository](https://github.com/gtfactslab/Baird_MoralesCuadrado_TRO_2025)  
 
-Transactions on Control Systems Technology 2025 — [paper](https://arxiv.org/abs/2508.14185)
-| [Personal repo](https://github.com/evannsm/MoralesCuadrado_Baird_TCST2025)
-| [FACTSLab repo](https://github.com/gtfactslab/Baird_MoralesCuadrado_TRO_2025)
-
-Transactions on Robotics 2025
-| [Personal repo](https://github.com/evannsm/MoralesCuadrado_Baird_TCST2025)
-| [FACTSLab repo](https://github.com/gtfactslab/MoralesCuadrado_Baird_TCST2025)
-
-### Related Work
-
-- [2025_NewtonRaphson_QuadrotorComplete](https://github.com/evannsm/2025_NewtonRaphson_QuadrotorComplete)
-- [Blimp_SimHardware_NR_MPC_FBL_BodyOfWork2024](https://github.com/evannsm/Blimp_SimHardware_NR_MPC_FBL_BodyOfWork2024)
+Transactions on Robotics 2025  
+[Personal Version of Repository](https://github.com/evannsm/MoralesCuadrado_Baird_TCST2025)  
+[Official FACTSLab Repository](https://github.com/gtfactslab/MoralesCuadrado_Baird_TCST2025)  
