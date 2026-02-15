@@ -13,7 +13,8 @@ from px4_msgs.msg import(
     VehicleCommand,
     VehicleStatus,
     VehicleOdometry,
-    RcChannels
+    RcChannels,
+    BatteryStatus
 )
 from newton_raphson_px4_utils.px4_utils.core_funcs import (
     engage_offboard_mode,
@@ -101,7 +102,7 @@ class OffboardControl(Node):
             depth=1
         )
 
-        # ----------------------- Subscribers --------------------------
+        # ----------------------- Publishers --------------------------
         self.offboard_control_mode_publisher = self.create_publisher(
             OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
         self.trajectory_setpoint_publisher = self.create_publisher(
@@ -110,6 +111,7 @@ class OffboardControl(Node):
             VehicleRatesSetpoint, '/fmu/in/vehicle_rates_setpoint', qos_profile)
         self.vehicle_command_publisher = self.create_publisher(
             VehicleCommand, '/fmu/in/vehicle_command', qos_profile)
+
 
         # ----------------------- Subscribers --------------------------
         # Mocap variables
@@ -132,6 +134,10 @@ class OffboardControl(Node):
         self.rc_channels_subscriber = self.create_subscription(
             RcChannels, '/fmu/out/rc_channels',
             self.rc_channel_callback, qos_profile)
+        
+        self.battery_status_subsriber = self.create_subscription(
+            BatteryStatus, '/fmu/out/battery_status',
+            self.battery_status_callback, qos_profile)
 
         # ----------------------- Set up Flight Phases and Time --------------------------
         self.T0 = time.time()
@@ -389,6 +395,9 @@ class OffboardControl(Node):
         flight_mode = rc_channels.channels[self.mode_channel - 1]
         self.offboard_mode_rc_switch_on = True if flight_mode >= 0.75 else False
 
+    def battery_status_callback(self, battery_status):
+        self.current_voltage = battery_status.voltage_v
+
     # ========== Timer Callbacks ==========
     def get_phase(self) -> FlightPhase:
         """Determine the current flight phase based on elapsed time."""
@@ -605,7 +614,11 @@ class OffboardControl(Node):
 
         # NOW CONVERT TO NORMALIZED INPUTS for PX4
         new_force = float(self.new_input[0])
-        new_throttle = float(self.platform.get_throttle_from_force(new_force))
+        new_throttle_raw = float(self.platform.get_throttle_from_force(new_force))
+
+        battery_compensation = 1 - 0.0779 * (self.current_voltage - 16.0)
+        new_throttle = new_throttle_raw * battery_compensation
+    
 
         new_roll_rate = float(self.new_input[1])
         new_pitch_rate = float(self.new_input[2])
