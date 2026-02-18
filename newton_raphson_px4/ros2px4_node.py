@@ -44,6 +44,7 @@ from newton_raphson_px4_utils.px4_utils.flight_phases import FlightPhase
 
 
 import time
+import jax
 import math as m
 import numpy as np
 import jax.numpy as jnp
@@ -248,14 +249,20 @@ class OffboardControl(Node):
 
 
 
-
     def time_and_compare(self, func, *args, **kwargs):
-        """Function to time a function call and return its output along with the time taken."""
-        start_time = time.time()
+        start = time.perf_counter()
         result = func(*args, **kwargs)
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        return *result, elapsed_time
+
+        # Force actual execution before stopping timer
+        result = jax.tree_util.tree_map(
+            lambda x: x.block_until_ready() if hasattr(x, "block_until_ready") else x,
+            result,
+        )
+
+        end = time.perf_counter()
+        elapsed = end - start
+
+        return *result, elapsed
 
     def jit_compile_controller(self) -> None:
         """ Perform a dummy call to all JIT-compiled controller functions to trigger compilation
@@ -294,7 +301,7 @@ class OffboardControl(Node):
 
         print(f"This is a speed up of {(total_time1)/(total_time2):.2f}x")
         print(f"Good for {(1.0/total_time2):.2f} Hz control loop")
-
+        # exit(0)
 
 
     def jit_compile_trajectories(self) -> None:
