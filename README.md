@@ -1,4 +1,8 @@
 # Newton-Raphson Flow for PX4-ROS2 Deployment
+![Status](https://img.shields.io/badge/Status-Hardware_Validated-orange)
+[![ROS 2 Compatible](https://img.shields.io/badge/ROS%202-Humble-blue)](https://docs.ros.org/en/humble/index.html)
+[![PX4 Compatible](https://img.shields.io/badge/PX4-Autopilot-pink)](https://github.com/PX4/PX4-Autopilot)
+
 This package is the culmination of 3 papers on Newton-Raphson Flow for Quadrotor Control.
 
 This package allows for fast, accuate, and computationally efficient control via the Newton-Raphson Flow (NR Flow) controller developed by Dr. Yorai Wardi and others. We introduce integral CBFs (I-CBFs) to smoothly limit control actuation.
