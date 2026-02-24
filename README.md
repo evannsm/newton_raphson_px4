@@ -2,6 +2,7 @@
 ![Status](https://img.shields.io/badge/Status-Hardware_Validated-blue)
 [![ROS 2 Compatible](https://img.shields.io/badge/ROS%202-Humble-blue)](https://docs.ros.org/en/humble/index.html)
 [![PX4 Compatible](https://img.shields.io/badge/PX4-Autopilot-pink)](https://github.com/PX4/PX4-Autopilot)
+[![evannsmc.com](https://img.shields.io/badge/evannsmc.com-Project%20Page-blue)](https://www.evannsmc.com/projects/nr-flow)
 
 This package is the culmination of 3 papers on Newton-Raphson Flow for Quadrotor Control.
 
@@ -89,6 +90,10 @@ cd .. && colcon build --symlink-install
 
 ## License
 MIT
+
+## Website
+
+Part of the [**evannsmc** open-source portfolio](https://www.evannsmc.com/projects) — [project page →](https://www.evannsmc.com/projects/nr-flow)
 
 # Papers and their repositories:
 American Control Conference 2024 - [see paper here](https://coogan.ece.gatech.edu/papers/pdf/cuadrado2024tracking.pdf)  
