@@ -189,6 +189,7 @@ class OffboardControl(Node):
         self.normalized_input = [self.platform.get_throttle_from_force(self.first_thrust), 0.0, 0.0, 0.0]
         self.x_ff = None      # feedforward state (set when F8_CONTRACTION is active)
         self.u_ff = None      # feedforward control (set when F8_CONTRACTION is active)
+        self.u_dev = None     # accumulated NR correction relative to feedforward operating point
         self._ff_jit = None  # JIT-compiled flat_to_x_u (created in jit_compile_trajectories)
         self._traj_jit = None  # JIT-compiled trajectory generation (persists across mode switch)
 
@@ -686,6 +687,7 @@ class OffboardControl(Node):
         else:
             self.x_ff = None
             self.u_ff = None
+            self.u_dev = None
 
 
         t0 = time.time()
@@ -742,14 +744,16 @@ class OffboardControl(Node):
             euler_rates_ff = np.array(self.u_ff[1:4])          # [dphi, dth, dpsi]
             body_rates_ff  = np.linalg.solve(T, euler_rates_ff) # [p_ff, q_ff, r_ff]
             thrust_ff      = self.platform.mass * float(self.x_ff[6])  # f_specific → F (N)
+            u_ff_vec = np.array([thrust_ff, body_rates_ff[0], body_rates_ff[1], body_rates_ff[2]])
 
-            # Set the full feedforward operating point as the baseline for NR.
-            # NR then computes only the residual correction on top of this, so the
-            # Jacobian is evaluated at the correct operating point for all 4 components.
-            last_input = (jnp.array(self.last_input)
-                          .at[0].set(thrust_ff)
-                          .at[1:].set(body_rates_ff))
+            # Preserve the accumulated NR correction on top of the moving feedforward
+            # operating point instead of resetting back to u_ff every control step.
+            if self.u_dev is None:
+                self.u_dev = np.array(self.last_input) - u_ff_vec
+
+            last_input = jnp.array(u_ff_vec + self.u_dev)
         else:
+            self.u_dev = None
             last_input = jnp.array(self.last_input)
 
         new_input, cbf_term = newton_raphson_standard(
@@ -761,6 +765,8 @@ class OffboardControl(Node):
             jnp.array(self.compute_control_timer_period),
             jnp.array(self.platform.mass),
         )
+        if self.u_ff is not None:
+            self.u_dev = np.array(new_input) - u_ff_vec
         self.new_input = new_input
         self.cbf_term = cbf_term
 
