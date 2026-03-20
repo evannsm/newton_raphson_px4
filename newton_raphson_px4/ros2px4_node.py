@@ -187,8 +187,8 @@ class OffboardControl(Node):
         self.first_thrust = self.platform.mass * GRAVITY
         self.last_input = np.array([self.first_thrust, 0.0, 0.0, 0.0])
         self.normalized_input = [self.platform.get_throttle_from_force(self.first_thrust), 0.0, 0.0, 0.0]
-        self.x_ff = None      # feedforward state (set when F8_CONTRACTION is active)
-        self.u_ff = None      # feedforward control (set when F8_CONTRACTION is active)
+        self.x_ff = None      # feedforward state (set when FIG8_CONTRACTION is active)
+        self.u_ff = None      # feedforward control (set when FIG8_CONTRACTION is active)
         self.u_dev = None     # accumulated NR correction relative to feedforward operating point
         self._ff_jit = None  # JIT-compiled flat_to_x_u (created in jit_compile_trajectories)
         self._traj_jit = None  # JIT-compiled trajectory generation (persists across mode switch)
@@ -369,11 +369,11 @@ class OffboardControl(Node):
         print(f"  Regular trajectory (JIT): {regular_total_time_2:.4f}s")
         print(f"  Regular speed up: {(regular_total_time_1)/(regular_total_time_2):.2f}x")
 
-        if self.ref_type == TrajectoryType.F8_CONTRACTION and self.feedforward:
+        if self.ref_type == TrajectoryType.FIG8_CONTRACTION and self.feedforward:
             print("  Compiling feedforward (flat_to_x_u)...")
             ctx = TrajContext(sim=self.sim, hover_mode=self.hover_mode, spin=self.spin,
                               double_speed=False, short=self.short)
-            flat_output = lambda t: TRAJ_REGISTRY[TrajectoryType.F8_CONTRACTION](t, ctx)
+            flat_output = lambda t: TRAJ_REGISTRY[TrajectoryType.FIG8_CONTRACTION](t, ctx)
             self._ff_jit = jax.jit(lambda t: flat_to_x_u(t, flat_output))
 
             x_ff, u_ff, ff_time_1 = self.time_and_compare(self._ff_jit, 0.0)
@@ -389,7 +389,7 @@ class OffboardControl(Node):
         print("  Storing persistent JIT for main trajectory...")
         _ctx_main = TrajContext(
             sim=self.sim, hover_mode=self.hover_mode, spin=self.spin,
-            double_speed=False if self.ref_type == TrajectoryType.F8_CONTRACTION else self.double_speed,
+            double_speed=False if self.ref_type == TrajectoryType.FIG8_CONTRACTION else self.double_speed,
             short=self.short)
         _traj_fn_main = TRAJ_REGISTRY[self.ref_type]
         self._traj_jit = jax.jit(
@@ -680,7 +680,7 @@ class OffboardControl(Node):
         self.ref = np.array(ref).flatten()
         self.ref_dot = np.array(ref_dot).flatten()
 
-        if self.ref_type == TrajectoryType.F8_CONTRACTION and self.feedforward and self._ff_jit is not None:
+        if self.ref_type == TrajectoryType.FIG8_CONTRACTION and self.feedforward and self._ff_jit is not None:
             x_ff, u_ff = self._ff_jit(self.reference_time)
             self.x_ff = x_ff  # [px,py,pz, vx,vy,vz, f_specific, phi, th, psi]
             self.u_ff = u_ff  # [df, dphi, dth, dpsi]

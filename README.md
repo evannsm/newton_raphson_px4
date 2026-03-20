@@ -40,9 +40,9 @@ ros2 run newton_raphson_px4 run_node --platform hw --trajectory helix --log
 # Hover mode 3, double speed, with yaw spin
 ros2 run newton_raphson_px4 run_node --platform sim --trajectory hover --hover-mode 3 --double-speed --spin
 
-# f8_contraction with feedforward, logged with _ff marker in filename
-ros2 run newton_raphson_px4 run_node --platform sim --trajectory f8_contraction --ff --log
-# -> logs to: sim_nr_std_f8_contraction_ff_1x.csv
+# fig8_contraction with feedforward, logged with _ff marker in filename
+ros2 run newton_raphson_px4 run_node --platform sim --trajectory fig8_contraction --ff --log
+# -> logs to: sim_nr_std_fig8_contraction_ff_1x.csv
 ```
 
 ### CLI Options
@@ -58,11 +58,11 @@ ros2 run newton_raphson_px4 run_node --platform sim --trajectory f8_contraction 
 | `--short`                                       | Short variant (fig8_vert)                                      |
 | `--spin`                                        | Enable yaw rotation                                            |
 | `--flight-period SEC`                           | Custom flight duration                                         |
-| `--ff`                                          | Mark log filename with `_ff` (only valid with `f8_contraction`) |
+| `--ff`                                          | Mark log filename with `_ff` (only valid with `fig8_contraction`) |
 
-## Feedforward for `f8_contraction`
+## Feedforward for `fig8_contraction`
 
-When the `f8_contraction` trajectory is selected, the node computes a differential-flatness feedforward at each control step using the same approach as the contraction controller (`flat_to_x_u` from `quad_trajectories`).
+When the `fig8_contraction` trajectory is selected, the node computes a differential-flatness feedforward at each control step using the same approach as the contraction controller (`flat_to_x_u` from `quad_trajectories`).
 
 **How it works:**
 

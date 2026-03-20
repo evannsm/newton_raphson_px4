@@ -118,7 +118,7 @@ def create_parser():
     parser.add_argument(
         '--ff',
         action='store_true',
-        help='Mark log filename with _ff suffix (only valid with --trajectory=f8_contraction)'
+        help='Mark log filename with _ff suffix (only valid with --trajectory=fig8_contraction)'
     )
 
     return parser
@@ -152,7 +152,7 @@ def generate_log_filename(args) -> str:
     # Trajectory
     parts.append(args.trajectory.value)  # e.g., 'helix', 'circle_horz'
 
-    # Feedforward marker (before speed, only for f8_contraction)
+    # Feedforward marker (before speed, only for fig8_contraction)
     if args.ff:
         parts.append("ff")
 
@@ -188,9 +188,9 @@ def validate_args(args, parser: argparse.ArgumentParser) -> None:
         if args.hover_mode is not None:
             parser.error("--hover-mode is only valid when --trajectory=hover")
 
-    # --ff is only valid with f8_contraction
-    if args.ff and args.trajectory != TrajectoryType.F8_CONTRACTION:
-        parser.error("--ff is only valid with --trajectory=f8_contraction")
+    # --ff is only valid with fig8_contraction
+    if args.ff and args.trajectory != TrajectoryType.FIG8_CONTRACTION:
+        parser.error("--ff is only valid with --trajectory=fig8_contraction")
 
     # Warn if --log-file is provided without --log
     if args.log_file is not None and not args.log:
