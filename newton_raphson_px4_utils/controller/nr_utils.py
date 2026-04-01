@@ -2,7 +2,7 @@ import jax
 import jax.numpy as jnp
 from jax import jit, jacfwd, lax, jacrev, hessian
 
-GRAVITY = 9.806
+GRAVITY = 9.8  # Match Gazebo world (Tools/simulation/gz/worlds/default.sdf)
 USING_CBFS = True
 C = jnp.array([[1, 0, 0, 0, 0, 0, 0, 0, 0],
                [0, 1, 0, 0, 0, 0, 0, 0, 0],
