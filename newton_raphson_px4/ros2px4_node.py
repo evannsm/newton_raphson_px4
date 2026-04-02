@@ -185,6 +185,7 @@ class OffboardControl(Node):
         # controller, while workshop enables the proposed structural fixes.
         self.T_LOOKAHEAD = self.nr_profile.lookahead_horizon_s
         self.LOOKAHEAD_STATE_DT = 0.05
+        self.compute_time = 0.0
         self.nr_error_integral = np.zeros(4, dtype=np.float64)
         self.nr_alpha = jnp.array(self.nr_profile.alpha)
         self.nr_integral_gain = jnp.array(self.nr_profile.integral_gain)
@@ -202,6 +203,9 @@ class OffboardControl(Node):
         self.first_thrust = self.platform.mass * GRAVITY
         self.last_input = np.array([self.first_thrust, 0.0, 0.0, 0.0])
         self.normalized_input = [self.platform.get_throttle_from_force(self.first_thrust), 0.0, 0.0, 0.0]
+        self.ref = np.zeros(4, dtype=np.float64)
+        self.ref_dot = np.zeros(4, dtype=np.float64)
+        self.ref_now = np.zeros(4, dtype=np.float64)
         self.x_ff = None      # feedforward state (set when FIG8_CONTRACTION is active)
         self.u_ff = None      # feedforward control (set when FIG8_CONTRACTION is active)
         self.u_dev = None     # accumulated NR correction relative to feedforward operating point
