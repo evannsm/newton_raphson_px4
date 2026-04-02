@@ -35,7 +35,7 @@ Newton updates per 100 Hz control cycle.
 
 For the measured Python comparison on April 1, 2026, see:
 
-- `docs/newton_raphson_workshop_profiles.qmd`
+- `docs/qmd/newton_raphson_workshop_profiles.qmd`
 
 ## Usage
 
