@@ -8,7 +8,7 @@ This package is the culmination of 3 papers on Newton-Raphson Flow for Quadrotor
 
 This package allows for fast, accuate, and computationally efficient control via the Newton-Raphson Flow (NR Flow) controller developed by Dr. Yorai Wardi and others. We introduce integral CBFs (I-CBFs) to smoothly limit control actuation.
 
-The NR Flow controller is an integral-based control strategy based on a continuous time flow-version of the known newton-raphson iterative algorithm for finding the zeros of functions. It has been shown to have desirable theoretical properties in previous work, including known tracking error bounds, and we show in our hardware implementations that it compares favorably to the native control stack of PX4 Autopilot, as well as NMPC. Notably, it outperforms NMPC in terms of speed and computational efficiency (measured by joules of energy expended by the CPU), and on complex trajectories it may even outperform NMPC due to computational constraints. This is an ideal controller when facing on-board computational limitations. In particular, we test and deploy this on an on-board Raspberry Pi 4 Model B on a Holybro x500V2 quadrotor and we compare it against the NMPC controller available in my [`NMPC_PX4`](https://github.com/evannsm/NMPC_PX4) package.
+The NR Flow controller is an integral-based control strategy based on a continuous time flow-version of the known newton-raphson iterative algorithm for finding the zeros of functions. It has been shown to have desirable theoretical properties in previous work, including known tracking error bounds, and we show in our hardware implementations that it compares favorably to the native control stack of PX4 Autopilot, as well as NMPC. Notably, it outperforms NMPC in terms of speed and computational efficiency (measured by joules of energy expended by the CPU), and on complex trajectories it may even outperform NMPC due to computational constraints. This is an ideal controller when facing on-board computational limitations. In particular, we test and deploy this on an on-board Raspberry Pi 4 Model B on a Holybro x500V2 quadrotor and we compare it against the NMPC controller available in my [`NMPC_PX4`](https://github.com/evannsmc/NMPC_PX4) package.
 
 ## Key Features
 
@@ -91,9 +91,9 @@ The thrust component `u_ff[0] = df` is not added to the NR thrust output (they l
 
 ## Dependencies
 
-- [quad_trajectories](https://github.com/evannsm/quad_trajectories) — trajectory definitions
-- [quad_platforms](https://github.com/evannsm/quad_platforms) — platform abstraction
-- [ros2_logger](https://github.com/evannsm/ROS2Logger) — experiment logging
+- [quad_trajectories](https://github.com/evannsmc/quad_trajectories) — trajectory definitions
+- [quad_platforms](https://github.com/evannsmc/quad_platforms) — platform abstraction
+- [ros2_logger](https://github.com/evannsmc/ROS2Logger) — experiment logging
 - [px4_msgs](https://github.com/PX4/px4_msgs) — PX4 ROS 2 message definitions
 - JAX / jaxlib
 
@@ -118,7 +118,7 @@ newton_raphson_px4/
 
 ```bash
 # Inside a ROS 2 workspace src/ directory
-git clone git@github.com:evannsm/newton_raphson_px4.git
+git clone git@github.com:evannsmc/newton_raphson_px4.git
 cd .. && colcon build --symlink-install
 ```
 
@@ -133,13 +133,13 @@ This project is part of the [evannsmc open-source portfolio](https://www.evannsm
 
 # Papers and their repositories:
 American Control Conference 2024 - [see paper here](https://coogan.ece.gatech.edu/papers/pdf/cuadrado2024tracking.pdf)  
-[Personal Version of Repository](https://github.com/evannsm/MoralesCuadrado_ACC2024)  
+[Personal Version of Repository](https://github.com/evannsmc/MoralesCuadrado_ACC2024)  
 [Official FACTSLab Repository](https://github.com/gtfactslab/MoralesCuadrado_Llanes_ACC2024)  
 
 Transactions on Control Systems Technology 2025 - [see paper here](https://arxiv.org/abs/2508.14185)  
-[Personal Version of Repository](https://github.com/evannsm/MoralesCuadrado_Baird_TCST2025)  
+[Personal Version of Repository](https://github.com/evannsmc/MoralesCuadrado_Baird_TCST2025)  
 [Official FACTSLab Repository](https://github.com/gtfactslab/Baird_MoralesCuadrado_TRO_2025)  
 
 Transactions on Robotics 2025  
-[Personal Version of Repository](https://github.com/evannsm/MoralesCuadrado_Baird_TCST2025)  
+[Personal Version of Repository](https://github.com/evannsmc/MoralesCuadrado_Baird_TCST2025)  
 [Official FACTSLab Repository](https://github.com/gtfactslab/MoralesCuadrado_Baird_TCST2025)  
