@@ -280,7 +280,7 @@ def main():
         short=short,
         spin=spin,
         pyjoules=pyjoules,
-        csv_handler=CSVHandler(log_file, base_path) if pyjoules and log_file else None,
+        csv_handler=CSVHandler(ensure_csv(generate_log_filename(args) + "_energy") if not log_file else log_file, base_path) if pyjoules else None,
         logging_enabled=logging_enabled,
         flight_period_=flight_period,
         feedforward=feedforward,
@@ -308,7 +308,7 @@ def main():
         traceback.print_exc()
     finally:
         if pyjoules and offboard_control_node.csv_handler:
-            print("Saving PyJoules energy data...")
+            print(f"Saving PyJoules energy data to {offboard_control_node.csv_handler._filename}.")
             offboard_control_node.csv_handler.save_data()
         if logging_enabled:
             print("Saving log data...")
